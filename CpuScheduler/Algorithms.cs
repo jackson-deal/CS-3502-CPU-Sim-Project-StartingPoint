@@ -420,8 +420,131 @@ namespace CpuScheduler
             }
         }
 
-        // TODO: Add new scheduling algorithms below. Use the above methods as
-        // examples when expanding functionality.
-    }
+        /// <summary>
+        /// Executes the Shortest Remaining Time First (SRTF) scheduling algorithm.
+        /// </summary>
+        public static void RunSRTF(string processCountInput)
+        {
+            if (!int.TryParse(processCountInput, out int processCount) || processCount <= 0)
+            {
+                MessageBox.Show("Invalid number of processes", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            double[] arrivalTimes = new double[processCount];
+            double[] burstTimes = new double[processCount];
+            double[] remainingTimes = new double[processCount];
+            double[] waitingTimes = new double[processCount];
+            double[] turnaroundTimes = new double[processCount];
+
+            DialogResult result = MessageBox.Show(
+                "SRTF Scheduling (Preemptive SJF)",
+                string.Empty,
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Information);
+
+            if (result != DialogResult.Yes) return;
+
+            // INPUT
+            for (int i = 0; i < processCount; i++)
+            {
+                string arrivalInput = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Enter arrival time:",
+                    "Arrival time for P" + (i + 1),
+                    "",
+                    -1, -1);
+
+                if (!double.TryParse(arrivalInput, out arrivalTimes[i]) || arrivalTimes[i] < 0)
+                {
+                    MessageBox.Show("Invalid arrival time", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                string burstInput = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Enter burst time:",
+                    "Burst time for P" + (i + 1),
+                    "",
+                    -1, -1);
+
+                if (!double.TryParse(burstInput, out burstTimes[i]) || burstTimes[i] < 0)
+                {
+                    MessageBox.Show("Invalid burst time", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                remainingTimes[i] = burstTimes[i];
+            }
+
+            int completed = 0;
+            double currentTime = 0;
+            int shortest = -1;
+            bool found = false;
+
+            while (completed < processCount)
+            {
+                double minRemaining = double.MaxValue;
+                shortest = -1;
+                found = false;
+
+                // Find shortest remaining time among arrived processes
+                for (int i = 0; i < processCount; i++)
+                {
+                    if (arrivalTimes[i] <= currentTime && remainingTimes[i] > 0 && remainingTimes[i] < minRemaining)
+                    {
+                        minRemaining = remainingTimes[i];
+                        shortest = i;
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    currentTime++;
+                    continue;
+                }
+
+                // Execute for 1 time unit
+                remainingTimes[shortest]--;
+                currentTime++;
+
+                // If process completes
+                if (remainingTimes[shortest] == 0)
+                {
+                    completed++;
+
+                    double finishTime = currentTime;
+
+                    turnaroundTimes[shortest] = finishTime - arrivalTimes[shortest];
+                    waitingTimes[shortest] = turnaroundTimes[shortest] - burstTimes[shortest];
+
+                    MessageBox.Show(
+                        $"P{shortest + 1} -> Waiting Time: {waitingTimes[shortest]}, Turnaround Time: {turnaroundTimes[shortest]}",
+                        "Process Result",
+                        MessageBoxButtons.OK);
+                }
+            }
+
+            // CALCULATE AVERAGES
+            double totalWT = 0, totalTAT = 0;
+
+            for (int i = 0; i < processCount; i++)
+            {
+                totalWT += waitingTimes[i];
+                totalTAT += turnaroundTimes[i];
+            }
+
+            double avgWT = totalWT / processCount;
+            double avgTAT = totalTAT / processCount;
+
+            MessageBox.Show($"Average Waiting Time: {avgWT}", "Result", MessageBoxButtons.OK);
+            MessageBox.Show($"Average Turnaround Time: {avgTAT}", "Result", MessageBoxButtons.OK);
+        }
+        /// <summary>
+        /// Executes the Highest Response Ratio Next (HRRN) scheduling algorithm.
+        /// </summary>
+        
+        
+            // Algorithms implemented in CpuSchedularForm.cs
+        }
 }
 
