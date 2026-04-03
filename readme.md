@@ -14,6 +14,8 @@ The simulator is functional but still a work in progress. Currently the followin
 | Shortest Job First | `Algorithms.RunShortestJobFirst` | Jobs are sorted by burst time before execution. |
 | Priority Scheduling | `Algorithms.RunPriorityScheduling` | User supplies a priority value for each job. |
 | Round Robin | `Algorithms.RunRoundRobin` | Requires a quantum time parameter. |
+| Shortest Remaining Time First | 'Algorithms.RunSRTFAlgorithm' | Preemptive; re-evaluates at every tick to run the job with the least time left.|
+| Highest Response Ratio Next | Algorithms.RunHRRNAlgorithm | Non-preemptive; uses aging (Wait + Burst) / Burst to select the next process.
 
 Additional algorithms can easily be added by extending `Algorithms.cs`.
 
